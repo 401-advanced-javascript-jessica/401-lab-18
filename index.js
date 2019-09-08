@@ -10,5 +10,8 @@ const options = {
 };
 mongoose.connect(process.env.MONGODB_URI, options);
 
+//create roles
+require('./createRoles');
+
 // Start the web server
 require('./src/app.js').start(process.env.PORT);

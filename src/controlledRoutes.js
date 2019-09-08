@@ -1,42 +1,33 @@
-// router.get('/public-stuff') should be visible by anyone
-// router.get('/hidden-stuff') should require only a valid login
-// router.get('/something-to-read') should require the read capability
-// router.post('/create-a-thing) should require the create capability
-// router.put('/update) should require the update capability
-// router.patch('/jp) should require the update capability
-// router.delete('/bye-bye) should require the delete capability
-// router.get('/everything') should require the superuser capability
-
 'use strict';
 
 const express = require('express');
 const thingRouter = express.Router();
 
-const User = require('./model/user.js');
 const auth = require('./middleware/auth.js');
-const oauth = require('./oauth/google.js');
 
 thingRouter.get('/public-stuff', (req, res, next) => {
-
+    res.send('public stuff accessed');
 });
 thingRouter.get('/hidden-stuff', auth('read'),(req, res, next) => {
-
+    res.send('hidden stuff accessed');
 });
 thingRouter.get('/something-to-read', auth('read'), (req, res, next) => {
-
+    res.send('something to read accessed');
 });
 thingRouter.post('/create-a-thing', auth('create'), (req, res, next) => {
-
+    res.send('create a thing accessed');
 });
 thingRouter.put('/update', auth('update'), (req, res, next) => {
-
+    res.send('update accessed');
 });
 thingRouter.patch('/jp', auth('update'), (req, res, next) => {
-
+    res.send('/jp accessed');
 });
 thingRouter.delete('/bye-bye', auth('delete'),(req, res, next) => {
-
+    res.send('bye bye accessed');
 });
 thingRouter.get('/everything', auth('superuser'),(req, res, next) => {
-
+    res.send('everything accessed');
 });
+
+module.exports = thingRouter;
