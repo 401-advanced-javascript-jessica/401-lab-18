@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const Role = require('./role.js');
 
 const SINGLE_USE_TOKENS = !!process.env.SINGLE_USE_TOKENS;
-const TOKEN_EXPIRE = process.env.TOKEN_LIFETIME || '5m';
+const TOKEN_EXPIRE = process.env.TOKEN_LIFETIME || '45m';
 const SECRET = process.env.SECRET || 'removethis';
 
 const usedTokens = new Set();
@@ -21,14 +21,14 @@ const userSchema = mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   email: { type: String, required: true },
-  role: { type: String, required: true, default: 'user', enum: ['user', 'admin', 'editor'] }
+  role: { type: String, required: true, default: 'user', enum: ['user', 'admin', 'editor'] },
 }, {
   toObject: {
-    virtuals: true
+    virtuals: true,
   },
   toJSON: {
-    virtuals: true
-  }
+    virtuals: true,
+  },
 });
 
 userSchema.virtual('roles', {
@@ -88,7 +88,7 @@ userSchema.statics.authenticateToken = function (token) {
     (SINGLE_USE_TOKENS) && parsedToken.type !== 'key' && usedTokens.add(token);
     let query = { _id: parsedToken.id };
     return this.findOne(query)
-        .then(user => console.log('find', user));
+      .then(user => console.log('find', user));
   } catch (e) {
     throw new Error('Invalid Token');
   }
@@ -116,7 +116,7 @@ userSchema.methods.generateToken = function (type) {
   };
   let options = {};
   if (type !== 'key' && !!TOKEN_EXPIRE) {
-    options = { expiresIn: TOKEN_EXPIRE }
+    options = { expiresIn: TOKEN_EXPIRE };
   }
 
   //console.log(token, options);
@@ -125,7 +125,7 @@ userSchema.methods.generateToken = function (type) {
 
 // Method for checking a specify users access controls
 userSchema.methods.can = function (capability) {
-  return capabilities[this.role].includes(capability)
+  return capabilities[this.role].includes(capability);
 };
 
 userSchema.methods.generateKey = function () {

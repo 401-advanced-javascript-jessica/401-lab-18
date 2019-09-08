@@ -1,25 +1,13 @@
-# LAB - 
+# LAB - 18
 
-## Project Name
+## ACL
 
-### Author: Student/Group Name
-
-### Common npm Scripts
- "lint": "eslint **/*.js",  
-   "start": "node index.js",  
-   "test": "jest --verbose --coverage",  
-   "test-watch": "jest --watchAll --verbose --coverage",  
-   "jsdoc": "jsdoc -c ./docs/config/jsdoc.config.json" . 
-
-### For JS DOCS
-[Leyla's Guide to JSDocs](https://docs.google.com/document/d/1ifvEDvWpdaCO3AtY6P2KBdDvHaG2GkWpfTFIHBx8BoE/edit?usp=sharing)
-* for your server file: app.use('/docs', express.static('./docs'));
+### Author: Jessica Walters
 
 ### Links and Resources
-* [submission PR](http://xyz.com)
-* [travis](http://xyz.com)
+* [submission PR](https://github.com/401-advanced-javascript-jessica/401-lab-18/pull/2)
+* [travis](https://www.travis-ci.com/401-advanced-javascript-jessica/401-lab-18)
 * [back-end](http://xyz.com) (when applicable)
-* [front-end](http://xyz.com) (when applicable)
 
 #### Documentation
 * [api docs](http://xyz.com) (API servers)
