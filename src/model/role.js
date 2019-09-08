@@ -3,11 +3,8 @@
 const mongoose = require('mongoose');
 
 const roleSchema = mongoose.Schema({
-  role: { type: String, required: true },
+  role: { type: String, required: true, unique: true },
   capabilities: { type: Array, required: true },
 });
 
-let editor = new roleSchema({role: "editor", capabilities: ["read"]})
-
-editor.save();
-module.exports = mongoose.model('roles', roleSchema);
+module.exports = mongoose.model('Role', roleSchema);

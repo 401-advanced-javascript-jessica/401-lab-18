@@ -11,6 +11,12 @@ const SECRET = process.env.SECRET || 'removethis';
 
 const usedTokens = new Set();
 
+const capabilities = {
+  admin: ['create', 'read', 'update', 'delete', 'superuser'],
+  editor: ['create', 'read', 'update'],
+  user: ['read'],
+};
+
 const userSchema = mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
@@ -25,13 +31,21 @@ const userSchema = mongoose.Schema({
   }
 });
 
-const capabilities = {
-  admin: ['create', 'read', 'update', 'delete'],
-  editor: ['create', 'read', 'update'],
-  user: ['read'],
-};
+userSchema.virtual('roles', {
+  ref: 'Role',
+  localField: 'role',
+  foreignField: 'role',
+  justOne: false,
+});
 
-userSchema.virtuals('getRole').
+userSchema.pre('find', async function() {
+  try {
+    this.populate('roles');
+  }
+  catch (error) {
+    console.log('find error', error);
+  }
+});
 
 userSchema.pre('save', async function () {
   if (this.isModified('password')) {
@@ -40,11 +54,11 @@ userSchema.pre('save', async function () {
 
   try {
     let userRole = await Role.findOne({ role: this.role });
-    if (!userRole) {
-      userRole = new Role({ role: this.role, capabilities: capabilities[this.role] });
-      await userRole.save();
-    }
-    console.log(userRole);
+    // if (!userRole) {
+    //   userRole = new Role({ role: this.role, capabilities: capabilities[this.role] });
+    //   await userRole.save();
+    //}
+    //console.log(userRole);
   } catch (err) {
     console.Error(`ERROR ${err}`);
   }
@@ -73,7 +87,8 @@ userSchema.statics.authenticateToken = function (token) {
     let parsedToken = jwt.verify(token, SECRET);
     (SINGLE_USE_TOKENS) && parsedToken.type !== 'key' && usedTokens.add(token);
     let query = { _id: parsedToken.id };
-    return this.findOne(query);
+    return this.findOne(query)
+        .then(user => console.log('find', user));
   } catch (e) {
     throw new Error('Invalid Token');
   }
@@ -89,10 +104,11 @@ userSchema.statics.authenticateBasic = function (auth) {
 userSchema.methods.comparePassword = function (password) {
   return bcrypt.compare(password, this.password)
     .then(valid => valid ? this : null);
-}
+};
 
 // refactoring generate token method to check for user capabilites and expiration variablw
 userSchema.methods.generateToken = function (type) {
+  console.log('generate token', this);
   let token = {
     id: this._id,
     capabilities: capabilities[this.role],
@@ -103,7 +119,7 @@ userSchema.methods.generateToken = function (type) {
     options = { expiresIn: TOKEN_EXPIRE }
   }
 
-  console.log(token, options);
+  //console.log(token, options);
   return jwt.sign(token, SECRET, options);
 };
 
