@@ -38,7 +38,7 @@ userSchema.virtual('roles', {
   justOne: false,
 });
 
-userSchema.pre('find', async function() {
+userSchema.pre('findOne', async function() {
   try {
     this.populate('roles');
   }
@@ -58,7 +58,6 @@ userSchema.pre('save', async function () {
     //   userRole = new Role({ role: this.role, capabilities: capabilities[this.role] });
     //   await userRole.save();
     //}
-    //console.log(userRole);
   } catch (err) {
     console.Error(`ERROR ${err}`);
   }
@@ -108,10 +107,11 @@ userSchema.methods.comparePassword = function (password) {
 
 // refactoring generate token method to check for user capabilites and expiration variablw
 userSchema.methods.generateToken = function (type) {
-  console.log('generate token', this);
+  console.log('generate token', this.roles[0].capabilities);
+  let capabilitiesArray = this.roles[0].capabilities;
   let token = {
     id: this._id,
-    capabilities: capabilities[this.role],
+    capabilities: capabilitiesArray,
     type: type || 'user',
   };
   let options = {};
@@ -125,7 +125,7 @@ userSchema.methods.generateToken = function (type) {
 
 // Method for checking a specify users access controls
 userSchema.methods.can = function (capability) {
-  return capabilities[this.role].includes(capability);
+  return this.roles[0].capabilities.includes(capability);
 };
 
 userSchema.methods.generateKey = function () {
