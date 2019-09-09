@@ -22,6 +22,7 @@ apiRouter.post('/signup', (req, res, next) => {
 });
 
 apiRouter.post('/signin', auth(), (req, res, next) => {
+    console.log(req.user.roles[0].capabilities);
   res.cookie('auth', req.token);
   res.send(req.token);
 });
